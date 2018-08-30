@@ -9,6 +9,11 @@ The ModbusMaster library should be downloaded. This can be achieved in the ardui
 > Sketch -> Include Library -> Manage Libraries...
 Search for and download the ModbusMaster library.
 
-The code should be downloaded from the repository and the '.ino' file be placed in the arduino file. The contents of the folder 'libraries' should be placed into the libraries folder. Additionally, 
+###Installing
+The code should be downloaded from the repository and the '.ino' file be placed in the Arduino file with other Arduino projects.
+The contents of the folder 'libraries' should be placed into the Arduino libraries folder. 
 
-
+##Built With
+-[Hongyuv Weather Station](http://www.hongyuv.com/en/product.php?id=53)
+-[Arduino]{(https://www.arduino.cc/)
+-[ModbusMaster Library](https://playground.arduino.cc/Code/ModbusMaster)
