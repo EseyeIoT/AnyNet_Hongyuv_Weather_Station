@@ -93,7 +93,7 @@ void Get_Data(){
   weather.humid = station.convert(HUMIDITY);
   weather.wind_speed = station.convert(WIND_SPEED);
   weather.temp = station.convert(TEMPERATURE);
-  weather.pressure = (station.convert(AIR_PRESSURE)/1000);
+  weather.pressure = station.convert(AIR_PRESSURE);
   //Note: rain pretty useless without matching refresh rate of weather station rain register
   weather.rain = station.convert(PRECIPITATION_INTENSITY);
   weather.altitude = station.convert(ALTITUDE);
@@ -120,16 +120,6 @@ void Send_Data(){
   mySerial.println(weather.wind_dir);
   Serial.flush();
   delay(8000);
-
-  char buff[8];
-  String string = "";
-  float farray[8] = {weather.humid,weather.temp,weather.pressure,weather.rain,weather.wind_dir,weather.wind_speed};
-  String sarray[8]= {"{humid: ",",temp: ",",pressure: ",",rain: ",",direction: ",",wind_speed: "};
-  for(int i=0; i<6;i++){
-    string+= sarray[i];
-    dtostrf(farray[i],4,2,buff);
-    string+= buff;
-  }
 
 }
 
