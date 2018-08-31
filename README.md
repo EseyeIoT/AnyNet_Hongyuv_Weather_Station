@@ -14,6 +14,6 @@ The code should be downloaded from the repository and the '.ino' file be placed 
 The contents of the folder 'libraries' should be placed into the Arduino libraries folder. 
 
 ## Built With
--[Hongyuv Weather Station](http://www.hongyuv.com/en/product.php?id=53)
--[Arduino]{(https://www.arduino.cc/)
--[ModbusMaster Library](https://playground.arduino.cc/Code/ModbusMaster)
+- [Hongyuv Weather Station](http://www.hongyuv.com/en/product.php?id=53)
+- [Arduino](https://www.arduino.cc/)
+- [ModbusMaster Library](https://playground.arduino.cc/Code/ModbusMaster)
