@@ -10,7 +10,7 @@ SoftwareSerial mySerial(11,12); //RX, TX
 ModbusMaster node;
 station station;
 
-//Create timing variables, with a delay of 5 minutes
+// Create timing variables, with a delay of 5 minutes
 unsigned long prev_time = millis();
 uint32_t delay_time = 300000;
 
@@ -29,7 +29,7 @@ struct Weather{
     int wind_dir;
   }weather;
 
-//Configuration for the Modbus library
+// Configuration for the Modbus library
 void preTransmission(){
   digitalWrite(RT, 1);
 }
@@ -38,13 +38,13 @@ void postTransmission(){
 }
 
 void setup() {
-  //Set LED and the RS485 module Read/Write pin as outputs
+  // Set LED and the RS485 module Read/Write pin as outputs
   pinMode(RT, OUTPUT);
   pinMode(ledpin, OUTPUT);
   digitalWrite(RT, 0);
   digitalWrite(ledpin, 0);
 
-  //Begin hardware and software serial ports
+  // Begin hardware and software serial ports
   Serial.begin(HONGYUV_BAUD_RATE,SERIAL_8E1);
   mySerial.begin(9600);
   while(!mySerial | !Serial){
@@ -53,23 +53,23 @@ void setup() {
   node.preTransmission(preTransmission);
   node.postTransmission(postTransmission);
 
-  //Begin connection to Weather Station
+  // Begin connection to Weather Station
   node.begin(1, Serial);
   
-  //Open topic between AnyNet Click and AWS account to pass data
-  mySerial.println("AT+AWSPUBOPEN=0,\"MyTopic\"");
-  mySerial.flush();
-  delay(8000);
+  // Open topic between AnyNet Click and AWS account to pass data
+  //mySerial.println("AT+AWSPUBOPEN=0,\"MyTopic\"");
+  //mySerial.flush();
+  //delay(8000);
 }
 
 
 bool cycle = true;
 void loop()
 {
-  //Check time since last iteration
+  // Check time since last iteration
   unsigned long current_time = millis();
   if((unsigned long) current_time - prev_time >= delay_time){
-    //error();
+    // error();
     prev_time = current_time;
     cycle = true;
   }
@@ -86,52 +86,53 @@ void loop()
 
 void Get_Data(){
 
-  //Read data from station
+  // Read data from station
   station.read_data(node);
 
-  //Populate structure with the returned data
+  // Populate structure with the returned data
   weather.humid = station.convert(HUMIDITY);
   weather.wind_speed = station.convert(WIND_SPEED);
   weather.temp = station.convert(TEMPERATURE);
   weather.pressure = (station.convert(AIR_PRESSURE)/1000);
-  //Note: rain pretty useless without matching refresh rate of weather station rain register
+  // Note: rain pretty useless without matching refresh rate of weather station rain register
   weather.rain = station.convert(PRECIPITATION_INTENSITY);
   weather.altitude = station.convert(ALTITUDE);
   weather.wind_dir = station.process(WIND_DIRECTION);
 }
 
 void Send_Data(){
-  
-  //Notify AnyNet Click that device will attempt to send data to AWS
-  mySerial.println("AT+AWSPUBLISH=0,88");
-  Serial.flush();
-  delay(8000);
 
-  //Send data to AWS
-  mySerial.print("Humidity: ");
-  mySerial.println(weather.humid);
-  mySerial.print("Pressure: ");
-  mySerial.println(weather.pressure);
-  mySerial.print("Rain: ");
-  mySerial.println(weather.rain);
-  mySerial.print("Temperature: ");
-  mySerial.println(weather.temp);
-  mySerial.print("Wind Direction: ");
-  mySerial.println(weather.wind_dir);
-  Serial.flush();
-  delay(8000);
-
-  /*char buff[8];
+  //Format data and put into a single string
+  char buff[8];
   String string = "";
   float farray[8] = {weather.humid,weather.temp,weather.pressure,weather.rain,weather.wind_dir};
-  String sarray[8]= {"{Humidity: ",",Temperature: ",",Pressure: ",",Rain: ",",Wind Direction: "};
+  String sarray[8]= {"Humidity: ","temp: ",",pressure: ",",rain: ",",direction: "};
   for(int i=0; i<5;i++){
     string+= sarray[i];
     dtostrf(farray[i],4,2,buff);
     string+= buff;
   } 
-  mySerial.println(sizeof(string));
-  mySerial.print(string);*/
+
+  digitalWrite(13,1);
+
+  //Open publish link to AWS
+  mySerial.println("AT+AWSPUBOPEN=0,\"MyTopic\"");
+  //Serial.flush();
+  delay(8000);
+  Serial.println("Topic open");
+
+  //Find length of data and notify AWS of incoming message and length
+  int ensure = string.length();
+  mySerial.print("AT+AWSPUBLISH=0,");
+  mySerial.println(ensure);
+  delay(8000);
+  Serial.println("publish requested");
+
+  //Send data 
+  mySerial.println(string);
+  delay(8000);
+  Serial.println("Sent");
+  digitalWrite(13,0);  
 }
 
 /*
