@@ -105,9 +105,9 @@ void Send_Data(){
   //Format data and put into a single string
   char buff[8];
   String string = "";
-  float farray[8] = {weather.humid,weather.temp,weather.pressure,weather.rain,weather.wind_dir};
-  String sarray[8]= {"Humidity: ","temp: ",",pressure: ",",rain: ",",direction: "};
-  for(int i=0; i<5;i++){
+  float farray[8] = {weather.humid,weather.temp,weather.pressure,weather.rain,weather.wind_dir,weather.wind_speed};
+  String sarray[8]= {"Humidity: ",",temp: ",",pressure: ",",rain: ",",direction: ",",wind_speed: "};
+  for(int i=0; i<6;i++){
     string+= sarray[i];
     dtostrf(farray[i],4,2,buff);
     string+= buff;
